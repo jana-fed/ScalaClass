@@ -37,17 +37,52 @@ object Day6ExerciseCityPopulation extends App {
    * @return number of years to reach , -1 if not reachable
    */
   def getCityYear(p0: Int, percentage: Double, delta: Int, targetPopulation: Int):Unit = {
-    var years = 2022
-    while (p0 <= targetPopulation ) {
-      val p1 = p0+(p0 * (percentage / 100) + delta)
-      p0 == p1
-      years += 1
+    //add some code here....
+    var numberOfYears = 0
+    var currentPop = p0
+    //so we are going to cut off decimal values so 1052.34 humans will be 1052
+    def nextYearPop(current: Int, percentage: Double, delta: Int):Int = (current*(1+percentage/100)+delta).toInt
+
+    def checkTargetPopulation(currentPop:Int, targetPopulation:Int= targetPopulation, p0:Int=p0):Boolean = {
+      if (p0 < targetPopulation) {
+        currentPop < targetPopulation
+      } else {
+        currentPop > targetPopulation //we go the other way
+      }
     }
- ///   9000 //FIXME //right now it returns this 9000 all the time
+
+    def checkCurrentPopulation(currentPop:Int, newPopulation:Int, targetPopulation:Int= targetPopulation, p0:Int=p0): Boolean = {
+      if (p0 < targetPopulation) {
+        currentPop < newPopulation
+      } else {
+        currentPop > newPopulation
+      }
+    }
+
+    var newPopulation = nextYearPop(currentPop, percentage, delta)
+
+    //lets check if we are losing people or stagnate on first year meaning nothing changes
+    if (!(checkCurrentPopulation(currentPop, newPopulation)) && checkTargetPopulation(currentPop)) {
+      numberOfYears = -1 //a bit of a workaround for our worst case scenario
+    }
+
+    //so while we are growing we are going to keep checking
+    while (checkCurrentPopulation(currentPop, newPopulation) && checkTargetPopulation(currentPop)) {
+      numberOfYears += 1
+      currentPop = newPopulation
+      newPopulation = nextYearPop(currentPop, percentage, delta)
+    }
+    //so if we stagnate
+
+    numberOfYears //FIXME //right now it returns this 9000 all the time
   }
 
   println(getCityYear(1000,2,50,1200)) // should print 3
   println(getCityYear(1000,2,-50,1200)) // should print -1
   println(getCityYear(1500000,2.5,10000,2000000)) // should print 10
+  //so searching for negative growth is currently not supported
+  println(getCityYear(1000,2,-50,800)) //this will give us -1 when we actually would reach this
+  println(getCityYear(1000,-2,-50,800)) //this will give us -1 when we actually would reach this
+
 
 }
