@@ -15,7 +15,8 @@ object Day9WordLengthExercise extends App {
   println(splitSentence.mkString(","))
   val wordsLength = splitSentence.map(it => it.length)
   println(wordsLength.mkString(","))
-  val longWords = wordsLength.filter(n => n > 5)
-  println(longWords.mkString(","))
+ // val longwordslength = wordsLength.filter(n => n > 5)
+  val longWords = splitSentence.filter(n => n.length > 5)
+  println(s"Your long words are: $longWords.mkString(",")")
 
 }
