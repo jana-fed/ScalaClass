@@ -1,5 +1,4 @@
-object Booleans {
-  object Booleans extends App{
+object Booleans extends App{
     println("Hello Booleans 🤣!")
 
     val isLate = true
@@ -48,6 +47,5 @@ object Booleans {
     //for string comparison by length we have that ability as well
     println(myName.length < anotherName.length)
 
-  }
 
 }

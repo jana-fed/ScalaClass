@@ -28,6 +28,8 @@ object MyUtil {
 
   def printDeltaMs(t0:Long, t1:Long, precision:Int = 3, taskName:String=""): Unit={
     val ms = deltaMs(t0,t1, precision = precision)
-    println(s"It took $ms milliseconds to run the task: $taskName")
+    println {
+      s"It took $ms milliseconds to run the task: $taskName"
+    }
   }
 }
