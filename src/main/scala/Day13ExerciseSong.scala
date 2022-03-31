@@ -20,6 +20,19 @@ class Song (val title:String, val author:String, val lyrics:Array[String]){
       {println(lyrics(n).toUpperCase())}}
   }
 }
+class Rap(title: String, author:String, lyrics: Array[String]) extends Song(title: String, author:String, lyrics: Array[String]){
+  def breakIT(maxLines:Int = lyrics.length-1, drop:String="yeah"): Unit ={
+    for (n <-  lyrics.indices){
+      var newlyrics = lyrics(n).split(" ")
+      for (c <- newlyrics.indices){
+        newlyrics(c) += drop
+      }
+      println(newlyrics(n))
+    }
+
+  }
+
+}
 //1. Song class
 //create  a class Song
 //
@@ -92,7 +105,8 @@ object Day13ExerciseSong extends App {
   val christmasstree = new Song("O Christmas Tree", "C. Nygard Jr.", Array("O Christmas tree, O Christmas tree","How lovely are thy branches","O Christmas tree, O Christmas tree","How lovely are thy branches"))
   christmasstree.sing(2)
   christmasstree.yell(6)
-
+  val zrap = new Rap("Ziemeļmeita", "Jumprava", Array("Gāju meklēt ziemeļmeitu"," Garu, tālu ceļu veicu"))
+  zrap.breakIT()
   //create a couple of Songs
   //possibly some Rap songs as well :)
 }
