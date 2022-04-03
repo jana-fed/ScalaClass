@@ -73,7 +73,6 @@ class Rap(title: String, author:String, lyrics: Array[String]) extends Song(titl
 //ziemelmeita.sing() //would print all lyrics
 
 //
-//
 //2. Rap class
 //For those feeling comfortable with class syntax, create a Rap class that inherits from Song
 //

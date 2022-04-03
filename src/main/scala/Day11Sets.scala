@@ -38,8 +38,8 @@ object Day11Sets extends App {
   //while using immutable sets, just like with other immutables I will need to create a new set
   val setWithAddition = mySet + 100 //100 should be added to the set (not math add!)
   println(setWithAddition)
-  val setWithMultipleAdditions = setWithAddition ++ (2,100,300,150)
-  println(setWithMultipleAdditions)
+  //val setWithMultipleAdditions = setWithAddition ++ (2,100,300,150)
+  //println(setWithMultipleAdditions)
  // val setAfterRemoval = setWithMultipleAdditions - 9 //9 should be removed from our collection
   //println {
     //setAfterRemoval
@@ -93,8 +93,8 @@ object Day11Sets extends App {
   println(n1to7Also)
 
 
-  val multipleUnion = n3to7 | setWithMultipleAdditions | n1to5 //we can union across multiple sets
-  println(multipleUnion)
+ // val multipleUnion = n3to7 | setWithMultipleAdditions | n1to5 //we can union across multiple sets
+ // println(multipleUnion)
   //so we can also use intersection across multiple sets
 
   //difference (not symmetrical!)
