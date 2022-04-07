@@ -1,3 +1,0 @@
-object Day2PlayGround {
-
-}
