@@ -13,7 +13,8 @@ object Day17ExerciseReadPoemMySolution extends App {
   val poemsname = poem.head.mkString
   println(s"Poems name is: $poemsname")
 
-  //val poemsAuthor = poem(1).
+  val poemsAuthor = poem(1).drop(3).mkString
+  println(s"Poems author is: $poemsAuthor")
 
   println("All lines that contains woods:")
   val woodLine = poem.filter(_.contains("woods"))
