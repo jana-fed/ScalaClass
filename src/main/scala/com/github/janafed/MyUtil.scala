@@ -1,5 +1,7 @@
 package com.github.janafed
 
+import scala.io.Source
+
 object MyUtil {
   //we are not going to use this directly thus not extends App
   //we will keep useful Utilities inside
@@ -35,4 +37,18 @@ object MyUtil {
       s"It took $ms milliseconds to run the task: $taskName"
     }
   }
+
+  def getLinesFromFile(src: String):Array[String] = {
+        val bufferedSource = Source.fromFile(src)
+        val lines = bufferedSource.getLines().toArray
+        bufferedSource.close()
+        lines
+      }
+
+  def getTextFromFile(src: String):String = {
+        val bufferedSource = Source.fromFile(src)
+        val text = bufferedSource.mkString
+        bufferedSource.close()
+        text
+      }
 }
