@@ -7,8 +7,8 @@ import scala.io.Source
 object Day17ExerciseReadPoemMySolution extends App {
 
   println(System.getProperty("user.dir"))
-  val filePath = "C:\\Users\\janap\\Documents\\ScalaClass\\src\\resources\\stopping_by"
-//  val filePath: String = "src/resources/stopping_by.txt"
+  //val filePath = "C:\\Users\\janap\\Documents\\ScalaClass\\src\\resources\\stopping_by"
+val filePath: String = "src/resources/stopping_by"
   val poem = getLinesFromFile(filePath)
   val poemsname = poem.head.mkString
   println(s"Poems name is: $poemsname")
