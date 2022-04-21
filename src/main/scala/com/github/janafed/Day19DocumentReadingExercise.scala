@@ -73,7 +73,7 @@ object Day19DocumentReadingExercise extends App {
     filePath = "src/resources/texts/webPages.txt"} else {
     filePath = "src/resources/" ++ args(0) ++ ".txt"}
 
-  def getDocumentFromUrl(website:String):Document={ //for gutenberg books
+  def getDocumentFromUrl(website:String):Document={ //I check if links belongs to gutenberg
     val rows = MyUtil.getTextFromWeb(website).split("\n")
     val title = GutenbergUtil.getTitle(rows)
     val author = GutenbergUtil.getAuthor(rows)
@@ -82,13 +82,13 @@ object Day19DocumentReadingExercise extends App {
     doc
     }
     else {val doc = new Document("Notitle", "NoAuthor", website, rows)
-    doc} //I
+    doc} //I used gutenberg books, I wanted to try on something else but didn't found .txt links.
   }
 
 //  val ex = getDocumentFromUrl("https://www.gutenberg.org/files/345/345-0.txt")
 //  ex.save() //checked if save method works
 
-  def addPrefixToLine(web:Array[String], prefix:String = "https://"):Array[String] = {
+  def addPrefixToLine(web:Array[String], prefix:String = "https://"):Array[String] = { //prefix function
     val webarray = scala.collection.mutable.ArrayBuffer[String]()
     for (w <- web) {
     if (w.contains(prefix)) {
@@ -101,16 +101,13 @@ object Day19DocumentReadingExercise extends App {
     }
   webarray.toArray
   }
-
   var urls = addPrefixToLine(MyUtil.getLinesFromFile(filePath)) //saving website from file to lines
   urls.foreach(println)
-
-
   val docs = urls.map(u => getDocumentFromUrl(u))
   for (d <- docs) {
     d.save()
     Thread.sleep(200)
-  }
+  } //saving documents
 
   //TODO create a program that reads web addresses from a file and downloads multiple files with some changes
   //check for system arguments (see Day14commandArguments )
