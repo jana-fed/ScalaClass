@@ -65,5 +65,13 @@ object Day20CSVExercise extends App {
   //alternative to creating a Year entry would be to split date field while grouping and group by first portion
   // https://alvinalexander.com/scala/how-to-split-sequences-subsets-groupby-partition-scala-cookbook/
 
+  val lettuceYears2 = lettuce.groupBy(_.date.split("-").head)
+  println(lettuceYears2)
+//  val veggieYears = veggies.map(_.date.split("-").head)
+//  veggieYears.distinct.foreach(println)
+  val sum = lettuce
+  val avglettuce2017 = MyUtil.myRound(lettuce.map(_.price).sum/lettuce.map(_.price).length,2)
+
+
 
 }
