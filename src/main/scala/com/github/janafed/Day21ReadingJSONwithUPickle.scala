@@ -51,5 +51,6 @@ object Day21ReadingJSONwithUPickle extends App {
   nonSugarCarbohydrates.reverse.take(5).foreach(println)
 
   //you can add some extra conclusions, statistics as well
-
+   val averageApplecalories = MyUtil.myRound(fruits.filter(_.name == "Apple").map(_.calories).sum/fruits.count(_.name == "Apple"),2)
+    println(averageApplecalories)
 }
