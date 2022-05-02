@@ -13,5 +13,23 @@ case class Fruit(genus: String,
                  sugar: Double = 0.0
                 ) {
   val nonSugars: Double = carbohydrates - sugar
+  def prettyPrint():Unit = {
+    println(s"Fruit genus:$genus, name: $name, family:$family, order:$order\n" +
+      s", carbs:$carbohydrates, sugar:$sugar, protein: $protein, fat:$fat, calories:$calories, nonSugarCarbs:$nonSugars")
+  }
+  def getJSON:String = {
+    s"""
+       |{
+       |  "genus": "$genus",
+       |  "name": "$name",
+       |  "family": "$family",
+       |  "order": "$order",
+       |  "carbohydrates": "$carbohydrates",
+       |  "sugar": "$sugar",
+       |  "protein": "$protein",
+       |  "fat": "$fat",
+       |  "calories": "$calories"
+       |}
+       |""".stripMargin
+  }
 }
-//TODO add the rest of fields from nutriotions

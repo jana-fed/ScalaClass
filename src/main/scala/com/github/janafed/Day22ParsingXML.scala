@@ -60,8 +60,8 @@ object Day22ParsingXML extends App {
   val romanceBook = bookUnits.filter(_.genre == "Romance")
   println("Romance books")
   println(romanceBook.mkString(";"))
-  val authorsBook = bookUnits.map(_.author).distinct
+  val authorsBook = bookUnits.map(_.author).distinct.sorted
   println("Authors:")
-  println(authorsBook.sorted.mkString)
+  authorsBook.foreach(println)
 
 }
