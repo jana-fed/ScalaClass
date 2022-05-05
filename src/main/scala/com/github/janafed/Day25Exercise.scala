@@ -7,7 +7,10 @@ import scala.collection.mutable.ArrayBuffer
 
 
 case class Album(albumId: Int, title:String, artistId: Int)
-case class Track(trackId:Int, name:String, albumId:Int, mediaTypeId:Int, genreId:Int, composer:String, milliseconds:Int, bytes:Int, unitPrice:Double)
+case class Track(trackId:Int, name:String, albumId:Int, mediaTypeId:Int, genreId:Int, composer:String, milliseconds:Int, bytes:Int, unitPrice:Double){
+  override def toString: String = s"$trackId,$name,$albumId,$mediaTypeId,$genreId,$composer,$milliseconds,$bytes,$unitPrice"
+
+}
 
 object Day25Exercise extends App {
   println("Testing Database connection")
@@ -80,7 +83,7 @@ object Day25Exercise extends App {
   val fileName = "tracks.csv"
   val dstFolder = "src/resources/csv"
   val dst = s"$dstFolder/$fileName"
-  val tracksStrings = trackCollection.map(_.toString)
+  val tracksStrings = trackCollection.map(_.toString())
 
   MyUtil.saveLines(dst,tracksStrings)
 
