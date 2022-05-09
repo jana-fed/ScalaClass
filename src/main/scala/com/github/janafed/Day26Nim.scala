@@ -33,7 +33,8 @@ class Nim(val playerA:String,
 
   //TODO bonus: objects created from this class should also have a ArrayBuffer of moves
   //so each time removeMatches is called this buffer is updated, thus we have an exact log of game moves
-
+  val playerAMoves = scala.collection.mutable.ArrayBuffer()
+  val playerBMoves = scala.collection.mutable.ArrayBuffer()
 
 }
 
