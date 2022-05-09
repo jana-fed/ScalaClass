@@ -9,7 +9,10 @@ import scala.collection.mutable.ArrayBuffer
 case class Album(albumId: Int, title:String, artistId: Int)
 case class Track(trackId:Int, name:String, albumId:Int, mediaTypeId:Int, genreId:Int, composer:String, milliseconds:Int, bytes:Int, unitPrice:Double){
   override def toString: String = s"$trackId,$name,$albumId,$mediaTypeId,$genreId,$composer,$milliseconds,$bytes,$unitPrice"
-
+//  def toCSV(track:Array[Track], colomns:String = "trackId,Name,albumId,MediaTypeId,GenreId,Composer,Milliseconds,Bytes,UnitPrice"):Array[String] = {
+//    val csvTracs = colomns ++ track.map(_.toString)
+//    csvTracs.toArray
+//  }
 }
 
 object Day25Exercise extends App {
