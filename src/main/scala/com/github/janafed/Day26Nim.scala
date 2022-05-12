@@ -1,173 +1,24 @@
 
 package com.github.janafed
 
+import java.io.FileNotFoundException
 import java.nio.file.{Files, Paths}
 import java.text.SimpleDateFormat
-import java.time.{ZoneOffset, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.Calendar
 import scala.collection.mutable.ArrayBuffer
 import scala.io.StdIn.readLine
 
-//TODO exercise
-//Create class Nim (or NimGame or NimState) - if you can come up with a better name please do
-//you could use case class if you want
-//Objects created from this class will hold ALL information particular to a single game of NIM
-//
-//create two at least two methods
-//SO this is called refactoring - keeping functionality but changing code
-
-//TODO one will be removeMatches which will perform a move of units allowed by the rules of the game
-
-//TODO 2nd method would be to print game status let's call this method showStatus - how many matches are in the pile, whose turn it is,
-//
-//TODO bonus: objects created from this class should also have a ArrayBuffer of moves
-//so each time removeMatches is called this buffer is updated, thus we have an exact log of game moves
-class Nim(
-           val playerA:String,
-           val playerB: String,
-           val startingCount:Int = 21,
-           val gameEndCondition:Int = 0,
-           val minMove: Int = 1,
-           val maxMove: Int = 3,
-
-           var isPlayerATurn:Boolean = true) {
-
-  //so the next  lines will be run upon initialization
-  println("Created a new game object of NIM")
-  var currentState:Int = startingCount
-  var currentPlayer:String = if (isPlayerATurn) playerA else playerB
-  var movesArray: ArrayBuffer[Int] = ArrayBuffer()
-
-
-  def removeMatches(unsafeMove:Int):Int = {
-    val safeMove = clampMove(unsafeMove, minMove, maxMove)
-    currentState -= safeMove //so we mutate/modify internal currentState = currentState - safeMove
-    movesArray += safeMove //save the move to move log
-    currentState
-  }
-
-  //I am removing parameters since showStatus only cares about properties local to this object
-  def showStatus():Unit = {
-    if (currentState > gameEndCondition) {
-      println(s"There are $currentState matches left.")
-      println(s"It is $currentPlayer's turn.")
-    }
-    else {
-      println(s"The game has ended. $currentPlayer (same as $getWinner ) has won. ")
-      println(s"Better luck next time $getLoser.")
-      //we could calculate the loser's name as well of course
-    }
-  }
-
-  def getWinner:String = {
-    if (isGameActive) "N/A" // could be empty string
-    else currentPlayer //since currentPlayer with no moves to make is the winner
-  }
-
-  def getLoser:String = {
-    if (isGameActive) "N/A" // could be empty string
-    else { //game is finished
-      if (isPlayerATurn) playerB else playerA
-    }
-  }
-
-  def clampMove(move: Int, min:Int, max:Int, verbose: Boolean  = true): Int = {
-    if (move > max) {
-      if (verbose) println(s"$move was too much, you will have to settle for $max")
-      max //return since this is the last line of the function
-    } else if (move < min) {
-      if (verbose) println(s"$move is too little, you will have to settle for $min")
-      min //return
-    } else {
-      move //return
-    }
-  }
-
-  /**
-   * Toggles to the next player
-   * @return
-   */
-  def nextPlayer():String = {
-    isPlayerATurn = !isPlayerATurn
-    currentPlayer = if (isPlayerATurn) playerA else playerB
-    currentPlayer
-  }
-
-  def isCurrentPlayerComputer:Boolean = currentPlayer == "COMPUTER"
-
-  def isGameActive:Boolean = currentState > gameEndCondition
-
-  def printMoves():Array[Int] = {
-    for ((move, index) <- movesArray.zipWithIndex) {
-      val playerName = if (index % 2 == 0) playerA else playerB
-      println(s"Move ${index+1}. $playerName took $move matches")
-    }
-    movesArray.toArray
-  }
-  def saveGameResult(dst:String): Unit = {
-    if (! Files.exists(Paths.get(dst))) {
-      println("Saving header since no file exists")
-      val header = "winner, loser, date" //we do not add \n since append will add \n
-      MyUtil.saveText(dst, header)
-    } else {
-      println(s"Need to save winner $getWinner and loser $getLoser")
-      //TODO save above and also with the date
-      //https://alvinalexander.com/scala/scala-get-current-date-time-hour-calendar-example/
-      val now = Calendar.getInstance().getTime
-      println(s"Today is $now")
-      val utcNow = ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT )
-      //      println(LocalDateTime.now().format( DateTimeFormatter.ISO_INSTANT ))
-      //TODO get local time in ISO 8601 format
-      val row = s"$getWinner $getLoser, $utcNow"
-      MyUtil.saveText(dst, row, append = true) //crucial that we use append flag so we do not accidentally overwrite..
-      //TODO explore logging solutions such as infamous log4j which make saving similar date more structured
-    }}
-
-    //TODO
-    //create a method saveGameScore(folder:String = "src/resources/nim", prefix:String = "game", suffix = ".csv"):Unit in Nim class that saves the actual game score as a single game
-    //file should be saved as game_year_month_day_hour_min_second.csv in src/resources/nim
-    //some ideas on how to get data info:
-    //https://alvinalexander.com/scala/scala-get-current-date-time-hour-calendar-example/
-    //format of the score should look like the following
-    //row 1header will be player, move
-    //row2 would be Alice, 1
-    //row3 could be Computer, 2
-    //row4 then Alice, 1
-    //no need to declare winner as we know the last player to move loses
-    def saveGameScore(folder:String = "src/resources/nim", prefix:String = "game", suffix:String = ".csv"):Unit ={
-      println("Saving game score!")
-      val now = Calendar.getInstance().getTime
-      val minuteFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss")
-      val currentTimeAsString = minuteFormat.format(now)
-      val dst = folder+ "/" + prefix + "_" + currentTimeAsString
-        println("Need to save the score!")
-        for ((move, index) <- movesArray.zipWithIndex) {
-          val playerName = if (index % 2 == 0) playerA else playerB
-          val row = s"$playerName $move"
-          MyUtil.saveText(dst, row, append = true)
-        }
-      }
-
-
-  }
-
-
-
 object Day26Nim extends App {
-  //TODO implement basic version of https://en.wikipedia.org/wiki/Nim
+  //implement basic version of https://en.wikipedia.org/wiki/Nim
   //https://en.wikipedia.org/wiki/Nim#The_21_game
-  //TODO setup/config - set data/state what is needed for the application
-  //TODO main application/game loop - it could be a loopless - if you process data only once
-  //TODO cleanup - close database connections, files etc
-  //No plan survives first contact with the enemy - who said it first?
-  //It is normal (especially Agile development) to adjust as you development
 
-  //NIM specific TODO
-  //setup
-  //we will start with 21 matches/tokens
+  //TODO move saveing date into database
+  //TODO add more computer opponents
+  //TODO allow more than one game at once
   val saveDst = "src/resources/nim/scores.csv"
-  val startingCount = 6 //21
+  val startingCount = 21
   val gameEndCondition = 0
   val minMove = 1
   val maxMove = 3
@@ -186,11 +37,32 @@ object Day26Nim extends App {
   val isPlayerAStarting = true //so A goes first
 
   //TODO create a new object holding all the information necessary for a game nim from this class Nim
-  val nimGame = new Nim(playerA, playerB,startingCount, gameEndCondition, minMove, maxMove, isPlayerAStarting)
+  val nimGame = new Nim(playerA, playerB, startingCount, gameEndCondition, minMove, maxMove, isPlayerAStarting)
 
-  def getComputerMove:Int = 2 //TODO add more complex logic later
+  def getComputerMove(): Int = 2 //TODO add more complex logic later
   //computer can be made to play perfectly
   //or we could add some randomness
+
+  def getHumanMove(): Int = {
+    //TODO move this to method
+    var needsInteger = true //we use this as a flag for our code
+    var myInteger = 0
+    //so we keep going until we get an input which we can cast to integer
+    while (needsInteger) {
+      val moveInput = readLine(s"How many matches do you want to take ${nimGame.currentPlayer}? (1-3) ")
+      //https://alvinalexander.com/scala/scala-try-catch-finally-syntax-examples-exceptions-wildcard/
+      try {
+        myInteger = moveInput.toInt //this type Casting will throw an exception on bad input
+        needsInteger = false //IMPORTANT! this line will not execute if error is encountered
+      } catch {
+        //It is considered good practice to catch specific errors relevant to your code
+        case e:NumberFormatException => println(s"That is not a number! + $e") //for users you would not print $e
+        // handling any other exception that might come up
+        case unknown => println("Got this unknown exception we need an integer!: " + unknown)
+      }
+    }
+    myInteger
+  }
 
   //main loop - while there are some matches play on
   //TODO implement PvP - player versus player - computer only checks the rules
@@ -200,10 +72,10 @@ object Day26Nim extends App {
     nimGame.showStatus()
 
     val move = if (nimGame.isCurrentPlayerComputer) {
-      getComputerMove
+      getComputerMove()
     } else {
-      readLine(s"How many matches do you want to take ${nimGame.currentPlayer}? (1-3) ").toInt
-    } //TODO error checking
+      getHumanMove()
+    }
     nimGame.removeMatches(move)
     nimGame.nextPlayer()
   }
@@ -218,11 +90,10 @@ object Day26Nim extends App {
   nimGame.showStatus()
   nimGame.printMoves()
 
+  //  Day27Persistence.saveGameResult(saveDst, nimGame.getWinner(), nimGame.getLoser())
   nimGame.saveGameResult(saveDst)
   nimGame.saveGameScore()
   //print game status again
   //TODO implement multiple games
-
-
 
 }
