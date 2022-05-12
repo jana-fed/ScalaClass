@@ -93,19 +93,21 @@ class NimDB(val dbPath: String) {
     val lastGameId = resultSet.getInt("id")
     lastGameId
   }
-//  def insertScore(moves:Array[Int], game_id:Int):Unit={
-//    val insertSqlmoves = """
-//                      |INSERT INTO scores (turn, moves, created)
-//                      |values (?,?,CURRENT_TIMESTAMP)
-//""".stripMargin
-//    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSqlmoves)
-//
-//    preparedStmt.setString (1, winner)
-//    preparedStmt.setString (2, loser)
-//    preparedStmt.execute
-//
-//    preparedStmt.close()
-//  }
+  def insertScore(moves:Array[Int], game_id:Int):Unit={
+    //val lastGamesId = getIdOfLastGame()
+    val insertSqlmoves = """
+                      |INSERT INTO scores (game_id,turn, moves, created)
+                      |values (?,?,?,CURRENT_TIMESTAMP)
+""".stripMargin
+    val preparedStmt: PreparedStatement = conn.prepareStatement(insertSqlmoves)
+
+    preparedStmt.setInt(1,game_id)
+    for (i <- 1 to moves.length){
+    preparedStmt.setInt (i, moves(i))}
+    preparedStmt.execute
+
+    preparedStmt.close()
+  }
 
   //TODO we need to create a helper method to get the id of the last game played in results
   //this assumes we save the game result first

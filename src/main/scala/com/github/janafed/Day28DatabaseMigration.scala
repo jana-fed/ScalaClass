@@ -8,7 +8,8 @@ object Day28DatabaseMigration extends App {
 
   db.insertResult("Alice", "Bob")
   db.insertResult("Carol", "Dave")
-  println(db.getIdOfLastGame())
+  val lastGamesId = db.getIdOfLastGame()
+  db.insertScore()
   //cleanup
   db.conn.close()
 
