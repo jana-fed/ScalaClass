@@ -8,7 +8,7 @@ object Day28DatabaseMigration extends App {
 
   db.insertResult("Alice", "Bob")
   db.insertResult("Carol", "Dave")
-  println(db.getIdOfLastGame())
+  //println(db.getIdOfLastGame())
   //cleanup
   db.conn.close()
 

@@ -43,19 +43,19 @@ class NimDB(val dbPath: String) {
     //also it should have turn column that will store game turn (starting from 1) for a specific game
     //finally we store move column
     //also lets store a created column as well -this will use autamtic timestamp later
-//    val statement2 = conn.createStatement()
-//    val sql2 =
-//      """
-//      |CREATE TABLE IF NOT EXISTS scores (
-//      |id INTEGER PRIMARY KEY NOT NULL,
-//      |game_id INTEGER FOREIGN KEY NOT NULL,
-//      |turn INTEGER NOT NULL,
-//      |move INTEGER NOT NULL,
-//      |created TEXT,
-//      |);
-//      |""".stripMargin
-//
-//    statement2.execute(sql2)
+  val statement2 = conn.createStatement()
+    val sql2 =
+      """
+      |CREATE TABLE IF NOT EXISTS scores (
+      |id INTEGER PRIMARY KEY NOT NULL,
+      |game_id INTEGER INT,
+      |turn INTEGER NOT NULL,
+      |move INTEGER NOT NULL,
+      |created TEXT
+      |);
+      |""".stripMargin
+
+    statement2.execute(sql2)
   }
 
   def insertResult(winner:String,loser:String):Unit = {
@@ -82,17 +82,17 @@ class NimDB(val dbPath: String) {
   //TODO create insertScore method
   //parameters will be Array[Int] of moves
   //also we will want a reference to the game id
-  def getIdOfLastGame():Int = {
-    val statement = conn.createStatement()
-    val sql =
-      """
-        |SELECT MAX(id)
-        |  FROM results;
-        |""".stripMargin
-    val resultSet = statement.executeQuery(sql)
-    val lastGameId = resultSet.getMetaData.toString
-    lastGameId
-  }
+//  def getIdOfLastGame():Int = {
+//    val statement = conn.createStatement()
+//    val sql =
+//      """
+//        |SELECT MAX(id)
+//        |  FROM results;
+//        |""".stripMargin
+//    val resultSet = statement.executeQuery(sql)
+//    val lastGameId = resultSet.getMetaData.toString
+//    lastGameId
+//  }
 //  def insertScore(moves:Array[Int], game_id:Int):Unit={
 //    val insertSqlmoves = """
 //                      |INSERT INTO scores (turn, moves, created)
