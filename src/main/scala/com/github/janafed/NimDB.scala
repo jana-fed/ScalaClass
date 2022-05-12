@@ -82,17 +82,17 @@ class NimDB(val dbPath: String) {
   //TODO create insertScore method
   //parameters will be Array[Int] of moves
   //also we will want a reference to the game id
-//  def getIdOfLastGame():Int = {
-//    val statement = conn.createStatement()
-//    val sql =
-//      """
-//        |SELECT MAX(id)
-//        |  FROM results;
-//        |""".stripMargin
-//    val resultSet = statement.executeQuery(sql)
-//    val lastGameId = resultSet.getMetaData.toString
-//    lastGameId
-//  }
+  def getIdOfLastGame():Int = {
+    val statement = conn.createStatement()
+    val sql =
+      """
+        |SELECT id FROM results
+        |WHERE id=(SELECT max(id) FROM results);
+        |""".stripMargin
+    val resultSet = statement.executeQuery(sql)
+    val lastGameId = resultSet.getInt("id")
+    lastGameId
+  }
 //  def insertScore(moves:Array[Int], game_id:Int):Unit={
 //    val insertSqlmoves = """
 //                      |INSERT INTO scores (turn, moves, created)
