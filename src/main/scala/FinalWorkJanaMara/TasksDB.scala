@@ -17,15 +17,30 @@ class TasksDB(val dbPath: String) {
     //this query should do nothing if table already exists
     val sql =
       """
-        |CREATE TABLE IF NOT EXISTS tasks (
+        |CREATE TABLE IF NOT EXISTS users (
         |id INTEGER PRIMARY KEY,
-        |user TEXT NOT NULL,
+        |name TEXT NOT NULL,
         |date TEXT
         |);
         |""".stripMargin
 
-    //    statement.executeQuery(sql) //so Query for selects
-    statement.execute(sql)
+    statement.addBatch(sql)
+    val sql1 =
+      """
+        |CREATE TABLE IF NOT EXISTS tasks (
+        |id INTEGER PRIMARY KEY,
+        |user_id INTEGER NOT NULL,
+        |   FOREIGN KEY (user_id)
+        |       REFERENCES users (id)
+        |);
+        |""".stripMargin
+
+    statement.addBatch(sql1)
+    statement.executeBatch()
+
+  }
+  def AddUsertoDatabase(user:String):Unit={
+    //TODO create method add user
   }
 
 

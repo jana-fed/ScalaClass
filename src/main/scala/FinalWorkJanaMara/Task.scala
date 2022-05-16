@@ -4,7 +4,7 @@ import sun.util.calendar.BaseCalendar.Date
 
 case class Task(){
 
-  def addTask(user:String, task:String, date: String):Unit = {
+  def addTasktoDB(user:String, task:String, date: String):Unit = {
     //TODO make add task command
   }
   def printHelp():Unit = {
@@ -17,6 +17,6 @@ case class Task(){
   }
 
   def viewTaskList():Unit = {
-    //TODO add viewtask command
+    //TODO add viewtask command from db
   }
 }
