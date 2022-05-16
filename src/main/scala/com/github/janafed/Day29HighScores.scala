@@ -13,7 +13,8 @@ object Day29HighScores extends App {
 
   db.insertNewUser("Shrek")
   println(db.getUserId("Shrek"))
-  println(db.getTopLosers())
+  println(db.getTopWinners().mkString)
+  println(db.getTopLosers().mkString)
 
   db.conn.close()
 }

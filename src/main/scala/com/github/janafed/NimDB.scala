@@ -286,7 +286,7 @@ class NimDB(val dbPath: String) {
 
   //TODO
   //def getTopLosers() just like get TopWinners also return Array[Player] sorted by most losses
-  def getTopLosers():Unit = {
+  def getTopLosers():Array[Player] = {
     val sql =
       """
         |SELECT u.name, COUNT(loser) losses FROM results r
