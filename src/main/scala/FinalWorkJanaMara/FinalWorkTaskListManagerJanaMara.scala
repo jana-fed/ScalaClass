@@ -4,7 +4,7 @@ import scala.io.StdIn.readLine
 
 object FinalWorkTaskListManagerJanaMara extends App {
   //Database migration
-  val db = new TasksDB("src/resources/taskmanager/taskmanager.db")
+  val db = new Task
   db.migrate()
   println("Final work assignment. TODO/TaskList manager. Authors: Jana Fedotova, Māra Skudrīte")
   val personsName = readLine("Welcome to TaskList manager. Please enter Your name:")
