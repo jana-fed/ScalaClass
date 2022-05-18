@@ -136,9 +136,9 @@ case class Task(userName:String, task:String){
  }
 
   def printUserTasks(userName:String):Unit = {
-    println("Here is your tasks:")
+    println(s"Here is your tasks $userName:")
     val allTasks = showAllUsersTasks(userName)
-    allTasks.foreach(println)
+    allTasks.foreach(task => println(task.task))
   }
 
 }
