@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import scala.collection.mutable.ArrayBuffer
 
+//so each time removeMatches is called this buffer is updated, thus we have an exact log of game moves
 class Nim(
            val playerA:String,
            val playerB: String,
@@ -21,6 +22,8 @@ class Nim(
   var currentState: Int = startingCount
   var currentPlayer: String = if (isPlayerATurn) playerA else playerB
   var movesArray: ArrayBuffer[Int] = ArrayBuffer()
+
+  def getMoves: Array[Int] = movesArray.toArray //again parameterless function
 
 
   def removeMatches(unsafeMove: Int): Int = {

@@ -1,5 +1,6 @@
 package com.github.janafed
 
+
 import java.sql.{DriverManager, PreparedStatement, ResultSet}
 import scala.collection.mutable.ArrayBuffer
 
@@ -304,10 +305,16 @@ class NimDB(val dbPath: String) {
       val player = Player(rs.getString("name"), losses = rs.getInt("losses"))
       playerBuffer += player
     }
-    playerBuffer.toArray //better to return immutable values
+    playerBuffer.toArray //better/safer to return immutable values
   }
 
-  //TODO
+  def printBiggestLosers():Unit = {
+    //it is surely tempting to use one function for both losers and winners
+    println("Players with the most losses are:")
+    val topLosers = getTopLosers()
+    topLosers.foreach(println)
+  }
+
   //  def getFullPlayerInfo:Array[Player]  = {
   //    //TODO
   //  }
@@ -317,10 +324,37 @@ class NimDB(val dbPath: String) {
   //also it is possible to write just a single SQL query but that is not required
   //again so simplest will be to merge TopWinners Array and TopLosers array
 
-//  def getFullPlayerInfo():Array[Player]= {
-//    val topWinners = getTopWinners()
-//    val topLosers = getTopLosers()
-//
-//
-//  }
+  def getFullPlayerInfo():Array[Player] = {
+    val winners = getTopWinners()
+    val losers = getTopLosers()
+    //for efficiency we create two maps of name to actual Player
+    //using Maps we avoid searching array of players for a specific name each time
+    //much faster on a larger collection
+    //here it does not really make a difference but it would on a larger data collection
+    //it is very similar idea behind SQL indexing by some column
+    val winnerMap = winners.map(winner => (winner.name, winner)).toMap
+    val loserMap = losers.map(loser => (loser.name, loser)).toMap //so we have instant access by player name
+
+    val playerBuffer = ArrayBuffer[Player]()
+    for (winner <- winners) {
+      //if we did not have map then our contains would need a loop to look up in the Array
+      val losses = if (loserMap.contains(winner.name)) loserMap(winner.name).losses else 0
+      val id = getUserId(winner.name)
+      playerBuffer += Player(winner.name, id, winner.wins, losses)
+    }
+    for (loser <- losers) {
+      if (!winnerMap.contains(loser.name)) {
+        val id = getUserId(loser.name)
+        playerBuffer += Player(loser.name, id, 0, loser.losses)
+      }
+    }
+    playerBuffer.toArray
+  }
+
+  def printAllPlayers():Unit = {
+    println("Full Player info")
+    val allPlayers = getFullPlayerInfo()
+
+    allPlayers.foreach(player => println(player.getPrettyString))
+  }
 }

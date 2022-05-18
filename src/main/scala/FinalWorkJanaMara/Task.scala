@@ -3,8 +3,9 @@ package FinalWorkJanaMara
 import sun.util.calendar.BaseCalendar.Date
 
 import java.sql.{DriverManager, PreparedStatement, ResultSet, ResultSetMetaData}
+import scala.collection.mutable.ArrayBuffer
 
-case class Task(){
+case class Task(userName:String, task:String){
 
   def printHelp():Unit = {
     println("add <task> - add a to-do item")
@@ -18,6 +19,7 @@ case class Task(){
   def viewTaskList():Unit = {
     //TODO add viewtask command from db
   }
+
   val url =  s"jdbc:sqlite:src/resources/taskmanager/taskmanager.db"
 
   val conn = DriverManager.getConnection(url) //TODO handle exceptions at connection time
@@ -33,7 +35,8 @@ case class Task(){
       """
         |CREATE TABLE IF NOT EXISTS users (
         |id INTEGER PRIMARY KEY,
-        |name TEXT NOT NULL
+        |name TEXT NOT NULL,
+        |created TEXT
         |);
         |""".stripMargin
 
@@ -41,32 +44,32 @@ case class Task(){
     val sql1 =
       """
         |CREATE TABLE IF NOT EXISTS tasks (
-        |id INTEGER PRIMARY KEY,
+        |task_id INTEGER PRIMARY KEY,
         |user_id INTEGER NOT NULL,
+        |task TEXT,
+        |created TEXT,
         |   FOREIGN KEY (user_id)
-        |       REFERENCES users (id),
-        |date TEXT
+        |       REFERENCES users (id)
         |);
         |""".stripMargin
-
     statement.addBatch(sql1)
     statement.executeBatch()
-
   }
-  def AddUserToDatabase(userName:String, userid:Int):Unit={
+  def AddNewUserToDatabase(userName:String):Unit={
+    if (getUserCount(userName) == 0) {
     val insertSql = """
-                      |INSERT INTO users (user_id,user)
-                      |values (?,?)
+                      |INSERT INTO users (name,created)
+                      |values (?,CURRENT_TIMESTAMP)
 """.stripMargin
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
-    preparedStmt.setInt (1, userid)
-    preparedStmt.setString (2, userName)
-
-    preparedStmt.execute
-
-    preparedStmt.close()
+    preparedStmt.setString (1, userName)
+      preparedStmt.execute
+      preparedStmt.close()
+    }
+    else {
+      println(s"User $userName already exists, nothing to do here!")
+    }
   }
-
   def getUserId(userName:String):Int = {
       val sql =
         """
@@ -84,40 +87,58 @@ case class Task(){
       preparedStmt.close()
       id
   }
-  def addTaskToDB(userName:String, task:String, date: String):Unit = {
+  def getUserCount(name:String):Int = {
+    val sql =
+      """
+        |SELECT COUNT(*) cnt FROM users u
+        |WHERE name = ?;
+        |""".stripMargin
+    val preparedStmt: PreparedStatement = conn.prepareStatement(sql)
+
+    preparedStmt.setString(1, name)
+
+    val rs = preparedStmt.executeQuery
+
+    val cnt = rs.getInt(1) //just the first column not worrying about the column name
+    preparedStmt.close()
+    cnt
+  }
+  def addTaskToDB(userName:String, task:String):Unit = {
     val userid = getUserId(userName)
     val insertSql = """
-                      |INSERT INTO tasks (user_id,task,date)
-                      |values (?,?,?)
+                      |INSERT INTO tasks (user_id,task,created)
+                      |values (?,?,CURRENT_TIMESTAMP)
 """.stripMargin
     val preparedStmt: PreparedStatement = conn.prepareStatement(insertSql)
     preparedStmt.setInt (1, userid)
     preparedStmt.setString (2, task)
-    preparedStmt.setString (3, date)
     preparedStmt.execute
-
     preparedStmt.close()
   }
-//  def showAllUsersTasks(userName:String):Array[Task]={
-//    val sql =
-//      """
-//        |SELECT * FROM tasks t
-//        |JOIN users u
-//        |ON u.id = t.id
-//        |GROUP BY winner
-//        |ORDER BY wins DESC
-//        |;
-//        |""".stripMargin
-//
-//    val playerBuffer = ArrayBuffer[Player]() //so we start with an empty buffer to store our rows
-//    val statement = conn.createStatement()
-//    val rs = statement.executeQuery(sql)
-//    while (rs.next()) {
-//      val player = Player(rs.getString("name"), wins = rs.getInt("wins"))
-//      playerBuffer += player
-//    }
-//    playerBuffer.toArray //better to return immutable values
-//
-// }
+  def showAllUsersTasks(userName:String):Array[Task]={
+    val sql =
+      """
+        |SELECT u.name, t.task FROM tasks t
+        |JOIN users u
+        |ON u.id = t.user_id
+        |WHERE u.name = ?
+        |;
+        |""".stripMargin
+
+    val userBuffer = ArrayBuffer[Task]() //so we start with an empty buffer to store our rows
+    val statement = conn.createStatement()
+    val rs = statement.executeQuery(sql)
+    while (rs.next()) {
+      val userName = Task(rs.getString("name"), task = rs.getString("task"))
+      userBuffer += userName
+    }
+    userBuffer.toArray //better to return immutable values
+ }
+
+  def printUserTasks(userName:String):Unit = {
+    println("Here is your tasks:")
+    val allTasks = showAllUsersTasks(userName)
+    allTasks.foreach(println)
+  }
 
 }
