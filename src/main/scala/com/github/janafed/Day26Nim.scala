@@ -1,6 +1,7 @@
 
 package com.github.janafed
 
+
 import java.io.FileNotFoundException
 import java.nio.file.{Files, Paths}
 import java.text.SimpleDateFormat
@@ -14,23 +15,30 @@ object Day26Nim extends App {
   //implement basic version of https://en.wikipedia.org/wiki/Nim
   //https://en.wikipedia.org/wiki/Nim#The_21_game
 
-  //TODO move saveing date into database
-  //TODO add more computer opponents
-  //TODO allow more than one game at once
+  //we could store the settings from here in a text file so non programmer could adjust them later on
+  //it could xml, it be json, but easier if it is just a text file
   val saveDst = "src/resources/nim/scores.csv"
   val db = new NimDB("src/resources/nim/nim.db")
   val startingCount = 21
   val gameEndCondition = 0
   val minMove = 1
   val maxMove = 3
-
-  val playerA = readLine("Player A what is your name? ")
-  var playerB = readLine("Player B what is your name? (press ENTER for computer) ")
-  if (playerB == "") playerB = "COMPUTER" //TODO see if you can do the previos 2 lines at once
-  //TODO more computer levels
+  var playerA = ""
+  var playerB = ""
   var computerLevel = 0
-  if (playerB == "COMPUTER") {
-    computerLevel = getIntegerInput("Please enter computer level (1-3)")
+
+  def setup():Unit = {
+    println("Let's play a game of NIM!")
+    getPlayerInformation()
+  }
+
+  def getPlayerInformation():Unit = {
+    playerA = readLine("Player A what is your name?")
+    playerB = readLine("Player B what is your name? (press ENTER for computer) ")
+    if (playerB == "") playerB = "COMPUTER"
+    if (playerB == "COMPUTER") {
+      computerLevel = getIntegerInput("Please enter computer level (1-3)")
+    }
   }
 
   //so this function is only inside the outer loop
@@ -54,16 +62,7 @@ object Day26Nim extends App {
     myInteger
   }
 
-  var isNewGameNeeded = true
-  while(isNewGameNeeded) {
-    println(s"Player A -  $playerA and Player B - $playerB let us play NIM!")
-
-    val isPlayerAStarting = true //so A goes first
-
-    val nimGame = new Nim(playerA, playerB, startingCount, gameEndCondition, minMove, maxMove, isPlayerAStarting)
-
-
-
+  def runSingleGame(nimGame:Nim, db:NimDB):Unit = {
     //main loop - while there are some matches play on
     while (nimGame.isGameActive) {
       //show the game state
@@ -86,31 +85,52 @@ object Day26Nim extends App {
     db.insertResult(nimGame.getWinner, nimGame.getLoser)
     nimGame.saveGameScore()
     db.insertFullScore(nimGame.getMoves)
-    db.printTopPlayers()
-    db.printBiggestLosers()
+    //    db.printTopPlayers()
+    //    db.printBiggestLosers()
 
     db.printAllPlayers()
+  }
 
-    val nextGameInput = readLine("Do you want to play another game with same players ? (Y/N)")
-    if (nextGameInput.toLowerCase.startsWith("y")) isNewGameNeeded = true
-    else isNewGameNeeded = false
+  def isNewGameNeeded():Boolean= {
+    val nextGameInput = readLine("Do you want to play another game? (Y/N)")
 
-    //TODO add support for new player names
-    //TODO add changing of computer level if playerb is computer
-    if (playerB == "COMPUTER"){
-      computerLevel match {
-        case 0 => computerLevel = 1
-        case 1 => computerLevel = 2
-        case 2 => computerLevel = 3
-        case 3 => computerLevel = 1
-      }
-    }
+    if (nextGameInput.toLowerCase.startsWith("y")) {
+      val arePlayersDifferent = readLine("Do you want to change players? (Y/N)")
 
+      if (arePlayersDifferent.toLowerCase.startsWith("y")) getPlayerInformation()
+
+      true //we return this when we need a new game
+    } else false
 
   }
 
-  println("Thank you for playing! Hoping to see you again ;)")
+  def runMainGame():Unit = {
+    var isNewGameNeededFlag = true
+    while(isNewGameNeededFlag) {
+      println(s"Player A -  $playerA and Player B - $playerB let us play NIM!")
 
+      val isPlayerAStarting = true //so A goes first
+
+      val nimGame = new Nim(playerA, playerB, startingCount, gameEndCondition, minMove, maxMove, isPlayerAStarting)
+
+      runSingleGame(nimGame, db)
+
+      isNewGameNeededFlag = isNewGameNeeded()
+    }
+
+  }
+
+  def cleanup():Unit = {
+    println("Thank you for playing! Hoping to see you again ;)")
+    //could add some extra stat display
+    //call database closure
+    //close any network connections (we do not have any here) etc
+  }
+
+  //our actual program starts here
+  setup()
+  runMainGame()
+  cleanup()
 
 }
 

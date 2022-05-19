@@ -18,10 +18,16 @@ object NimAI {
   def getMinimalStrategy:Int = 1
   def getRandomStrategy:Int = Random.nextInt(3)+1 //nextInt returns 0 to 2 but we need 1 to 3
 
-  //TODO FIXME create smart strategy
   def getSmartStrategy(currentState:Int):Int = {
     //some match case would work in combination with modulo/reminder operation
     //plus what should computer do when it has a losing position - one idea play randomly then
-    2 //FIXME figure out a smart strategy
+    val remainder: Int = currentState % 4
+    remainder match {
+      case 0 => 3 //say we have 4,8 matches left we take 3
+      case 1 => getRandomStrategy //so in case we are losing we go crazy/random :)
+      case 2 => 1 //we have 2,6,10 etc matches left we take 1
+      case 3 => 2 //we have 3,7,11 etc we take 2
+    }
   }
 }
+
